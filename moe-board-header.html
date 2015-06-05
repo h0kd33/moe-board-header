@@ -1,0 +1,136 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../moe-style/moe-style.html">
+<dom-module id="moe-board-header">
+    <link rel="stylesheet" type="text/css" href="moe-board-header.css">
+    <style>
+    :host {
+        display: inline-block;
+        box-sizing: border-box;
+    }
+    </style>
+    <template>
+        <div id="headerContainer">
+            <div class="layout horizontal">
+                <iron-image id="boardLogo" src="../img/logo.png" width="300" height="300" sizing="contain"></iron-image>
+                <div id="right" class="flex">
+                    <paper-item>
+                        <div class="flex">
+                            <h1>{{boardName}}</h1>
+                        </div>
+                        <paper-fab icon="favorite" mini title="heart"></paper-fab>
+                        <paper-button mini raised>機能</paper-button>
+                    </paper-item>
+                    <p id="introduction">『艦隊これくしょん -艦これ-』は、DMM.comと角川ゲームスが共同開発した、新しいタイプのソーシャルゲームです。
+                        <br>旧日本軍の駆逐艦や軽巡洋艦、重巡洋艦を擬人化した「艦娘（かんむす）」で、艦隊を編成、育成、強化しながら、無敵の連合艦隊を目指す育成シミュレーションゲームです。
+                    </p>
+                    <div id="textarea">
+                        <!-- moe-form -->
+                        <iron-autogrow-textarea class="bloom" id="publishTextarea" on-click="_onClick" rows="3"></iron-autogrow-textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</dom-module>
+<script>
+Polymer({
+
+    is: 'moe-board-header',
+
+    behaviors: [
+        Polymer.NeonSharedElementAnimatableBehavior
+    ],
+
+    properties: {
+        boardName: {
+            type: String,
+            value: '艦隊これくしょん'
+        },
+        introduction: {
+            type: Object,
+            value: '『艦隊これくしょん -艦これ-』は、DMM.comと角川ゲームスが共同開発した、新しいタイプのソーシャルゲームです。<br />旧日本軍の駆逐艦や軽巡洋艦、重巡洋艦を擬人化した「艦娘（かんむす）」で、艦隊を編成、育成、強化しながら、無敵の連合艦隊を目指す育成シミュレーションゲームです。'
+        },
+        animationConfig: {
+            type: Object,
+            value: function() {
+                return {
+                    'entry': [{
+                        name: 'hero-animation',
+                        id: 'hero',
+                        toPage: this
+                    }],
+                    'exit': [{
+                        name: 'fade-out-animation',
+                        id: 'ripple',
+                        fromPage: this
+                    }, {
+                        name: 'hero-animation',
+                        id: 'hero',
+                        fromPage: this
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.$.introduction
+                    }, {
+                        name: 'slide-up-animation',
+                        node: this.$.introduction
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.$.boardLogo
+                    }]
+                };
+            }
+        }
+
+    },
+
+    listeners: {
+        // click: '_onClick'
+    },
+    _onClick: function(event) {
+        this.fire('textarea-click');
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+        this.sharedElements = {
+            'hero': this.$.textarea
+        };
+        this.$.introduction.innerHTML = this.introduction;
+        this.$.publishTextarea.set('textarea.placeholder', '點擊這裡開始發文..');
+    },
+
+    attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+    },
+
+    detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+    }
+});
+</script>
