@@ -35,7 +35,9 @@
     }
     /* 發文模式 */
     
-    #header[mode-publish] {}
+    #header[mode-publish] {
+
+    }
     
     #header[mode-publish] #introduction,
     #header[mode-publish] #introductionItem {
@@ -48,6 +50,9 @@
     #header[mode-publish] #textarea {
         background-color: #fff;
     }
+    #header[mode-publish] #form #textareaControl {
+        display: block;
+    }
     
     #introduction {
         transition: all 1s;
@@ -58,8 +63,21 @@
     }
     
     #textarea {
+        display: block;
         transition: all 1s;
         background-color: #eee;
+        width: 100%;
+        max-width: 450px;
+    }
+    #form {
+        padding: 0 16px;
+    }
+    #form #textareaControl{
+        display: none;
+    }
+    
+    .container {
+        padding: 8px 0;
     }
     </style>
     <template>
@@ -71,28 +89,28 @@
         <div id="header">
             <iron-image id="boardLogo" src="../img/logo.png" width="300" height="300" sizing="contain"></iron-image>
             <div id="headerContent" class="flex">
-                <paper-item id="titleItem">
-                    <div class="flex">
-                        <h1>{{boardName}}</h1>
-                    </div>
-                    <div class="layout horizontal">
-                        <paper-fab icon="favorite" mini title="heart"></paper-fab>
-                        <paper-button mini raised>機能</paper-button>
-                    </div>
-                </paper-item>
+                <div class="container">
+                    <paper-item id="titleItem">
+                        <div class="flex">
+                            <h1>{{boardName}}</h1>
+                        </div>
+                        <div class="layout horizontal">
+                            <paper-fab icon="favorite" mini title="heart"></paper-fab>
+                            <paper-button mini raised>機能</paper-button>
+                        </div>
+                    </paper-item>
+                </div>
                 <paper-item id="introductionItem" class="flex">
                     <p id="introduction"></p>
                 </paper-item>
-                <paper-item>
-                    <div id="textareaItem">
-                        <!-- moe-form -->
-                        <iron-autogrow-textarea id="textarea" on-click="_onPulish" rows="3"></iron-autogrow-textarea>
-                        <div>
-                            <paper-button mini raised>Submit</paper-button>
-                            <paper-button mini on-click="_unPulish">Cancel</paper-button>
-                        </div>
+                <div id="form" class="container">
+                    <!-- moe-form -->
+                    <iron-autogrow-textarea id="textarea" on-click="_onPulish" rows="3"></iron-autogrow-textarea>
+                    <div id="textareaControl" class="container">
+                        <paper-button mini raised>Submit</paper-button>
+                        <paper-button mini on-click="_unPulish">Cancel</paper-button>
                     </div>
-                </paper-item>
+                </div>
             </div>
         </div>
     </template>
