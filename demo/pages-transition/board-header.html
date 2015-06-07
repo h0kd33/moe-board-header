@@ -6,14 +6,12 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-input/paper-input-container.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation.html">
 <link rel="import" href="../moe-style/moe-style.html">
-<dom-module id="publish-article">
+<dom-module id="board-header">
     <link rel="stylesheet" type="text/css" href="moe-board-header.css">
     <style>
     :host {
@@ -24,7 +22,7 @@
     <template>
         <div id="headerContainer">
             <div class="layout horizontal">
-                <iron-image id="boardLogo" width="300" height="300" sizing="contain" preload placeholder="data:image/gif;base64,R0lGODdhyADIAOMAAO7u/5aWlqGho9jY5OPj8cLCyqyssLe3vc3N1wAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAyADIAAAE/hDISau9OOvNu/9gKI5kaZ5oqq5s675wLM90bd94ru987//AoHBILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuHxOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS06kB1tYqA9cUBQEFrgLWAgIqBOEBFNuu1gMs2ugT3d/rAe0r77bsFwMGAQLzEggc8AcQAIJwA+EBuKbQmgF+3iocDHBAXiZ9Fd6dAxhuo4R3/gwnGDgnkqE1BBM0XrN3CSOFgQYM+ouHEsFMAP1i2lQIAN8EhwS6kZPQ74BMnpZcTgiHkoA1AhKxAWDaU+pHqwvrVVVI1ScmpRIwYjxwTqo+r1vTafV6FmtSrRXEak0ooB+8tjzR4v251m0llwSgUnUaAOrJtFMDoESrty9XxYi/wk0sMEBMoRKo7iRK8SiFxu285vQMoIDR0qdNN+rmbxxJlRFLi7u22OG1mDjP4bYb2uFVf+r0CZ+cyOS1oRD/cUM4cN5EA3bDhszqWOHEhBLIZh+qHdnmaFABwIwm9BxLZxAtn6fGvr379/Djy59Pv779+/jz69/Pv7///wAGQyjggAQWaOCBCCao4IIMNujggxBGKOGEFFZo4YUYZqjhhhx26OGHIIYo4ogklmjiiSimqOKKLLbo4oswxijjjDRKEQEAOw=="></iron-image>
+                <iron-image id="boardLogo" src="../img/logo.png" width="300" height="300" sizing="contain"></iron-image>
                 <div id="right" class="flex">
                     <paper-item>
                         <div class="flex">
@@ -33,13 +31,12 @@
                         <paper-fab icon="favorite" mini title="heart"></paper-fab>
                         <paper-button mini raised>機能</paper-button>
                     </paper-item>
+                    <p id="introduction">『艦隊これくしょん -艦これ-』は、DMM.comと角川ゲームスが共同開発した、新しいタイプのソーシャルゲームです。
+                        <br>旧日本軍の駆逐艦や軽巡洋艦、重巡洋艦を擬人化した「艦娘（かんむす）」で、艦隊を編成、育成、強化しながら、無敵の連合艦隊を目指す育成シミュレーションゲームです。
+                    </p>
                     <div id="textarea">
                         <!-- moe-form -->
-                        <paper-textarea size="1" label="發表文章" id="publishTextarea" char-counter rows="10" maxlength="500"></paper-textarea>
-                        <paper-button raised>Submit</paper-button>
-                        <paper-button on-click="_onCancel" raised>Cancel</paper-button>
-                        <paper-button raised>注意事項</paper-button>
-                        <paper-button raised>版規</paper-button>
+                        <iron-autogrow-textarea class="bloom" id="publishTextarea" on-click="_onClick" rows="3"></iron-autogrow-textarea>
                     </div>
                 </div>
             </div>
@@ -49,7 +46,7 @@
 <script>
 Polymer({
 
-    is: 'publish-article',
+    is: 'board-header',
 
     behaviors: [
         Polymer.NeonAnimationRunnerBehavior
@@ -60,54 +57,48 @@ Polymer({
             type: String,
             value: '艦隊これくしょん'
         },
-        sharedElements: {
+        introduction: {
             type: Object,
-            value: function() {
-                return {
-                    'hero': this.$.textarea,
-                    'ripple': this.$.boardLogo
-                };
-            }
+            value: '『艦隊これくしょん -艦これ-』は、DMM.comと角川ゲームスが共同開発した、新しいタイプのソーシャルゲームです。<br />旧日本軍の駆逐艦や軽巡洋艦、重巡洋艦を擬人化した「艦娘（かんむす）」で、艦隊を編成、育成、強化しながら、無敵の連合艦隊を目指す育成シミュレーションゲームです。'
         },
         animationConfig: {
             type: Object,
             value: function() {
                 return {
                     'entry': [{
-                            name: 'hero-animation',
-                            id: 'hero',
-                            toPage: this
-                        }, {
-                            name: 'hero-animation',
-                            id: 'ripple',
-                            toPage: this
-                        }, {
-                            name: 'fade-in-animation',
-                            node: this.$.boardLogo
-                        }
-
-                    ],
+                        name: 'hero-animation',
+                        id: 'hero',
+                        toPage: this
+                    }],
                     'exit': [{
                         name: 'fade-out-animation',
-                        node: this.$.boardLogo
+                        id: 'ripple',
+                        fromPage: this
                     }, {
                         name: 'hero-animation',
                         id: 'hero',
                         fromPage: this
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.$.introduction
+                    }, {
+                        name: 'slide-up-animation',
+                        node: this.$.introduction
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.$.boardLogo
                     }]
                 };
             }
         }
+
     },
+
     listeners: {
-        'neon-animation-finish': '_onAnimationFinish'
+        // click: '_onClick'
     },
-    _onAnimationFinish: function() {
-        this.$.publishTextarea.textarea.style.border = '1px solid red';
-        console.log('finish');
-    },    
-    _onCancel: function() {
-        this.fire('cancel-click');
+    _onClick: function(event) {
+        this.fire('textarea-click');
     },
 
     // Element Lifecycle
@@ -118,7 +109,12 @@ Polymer({
         // are not.
         //
         // This is the point where you should make modifications to the DOM (when
-        // necessary), or kick off any processes the element wants to perform. 
+        // necessary), or kick off any processes the element wants to perform.
+        this.sharedElements = {
+            'hero': this.$.textarea
+        };
+        this.$.introduction.innerHTML = this.introduction;
+        this.$.publishTextarea.set('textarea.placeholder', '點擊這裡開始發文..');
     },
 
     attached: function() {

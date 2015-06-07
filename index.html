@@ -5,53 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-
-    <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
-    <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
-    <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
     <link rel="import" href="moe-board-header.html">
-    <link rel="import" href="publish-article.html">
+</head>
 
-    <style>
-
-      body {
-        overflow: hidden;
-      }
-
-      neon-animated-pages {
-        height: 100%;
-      }
-
-    </style>
-
-  </head>
-  <body class="fullbleed">
-
+<body>
     <template is="dom-bind">
-
-      <neon-animated-pages id="pages" selected="0">
-
-        <moe-board-header on-textarea-click="_onTextareaClick"></moe-board-header>
-
-        <publish-article id="fullsize-card" hero-id="hero" on-cancel-click="_onFullsizeClick">
-        </publish-article>
-
-      </neon-animated-pages>
-
+        <moe-board-header on-textarea-click="_textareaClick"></moe-board-header>
     </template>
-
-    <script>
-
-      var scope = document.querySelector('template[is="dom-bind"]');
-
-      scope._onTextareaClick = function(event) {
-        this.$.pages.selected = 1;
-      };
-
-      scope._onFullsizeClick = function(event) {
-        this.$.pages.selected = 0;
-      };
-
-    </script>
+</body>
+<script>
+var scope = document.querySelector('template[is="dom-bind"]');
+scope._textareaClick = function() {
+    var t = document.querySelector('moe-board-header');
+    t._publishArticle();
+}
+</script>
 
 </html>
