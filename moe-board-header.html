@@ -29,31 +29,31 @@
     }
     /* 手機介面 : <768px */
     
-    #header[mobile],
-    #header[mobile] #titleItem {
+    :host([mobile]),
+    :host([mobile])#titleItem {
         @apply(--layout-vertical);
     }
-    #header[mobile] #form {
+    :host([mobile] #form) {
         max-width: 100%;
     }
     /* 發文模式 */
     
-    #header[mode-publish] {
+    :host([mode-publish]) {
 
     }
     
-    #header[mode-publish] #introduction,
-    #header[mode-publish] #introductionItem {
+    :host([mode-publish]) #introduction,
+    :host([mode-publish]) #introductionItem {
         transition: all 0.5s ease-out;
         margin: 0;
         min-height: 0;
         height: 0px;
     }
     
-    #header[mode-publish] #textarea {
+    :host([mode-publish]) #textarea {
         background-color: #fff;
     }
-    #header[mode-publish] #form #textareaControl {
+    :host([mode-publish]) #form #textareaControl {
         display: block;
         @apply(--layout-horizontal);
         @apply(--layout-horizontal-reverse);
@@ -168,7 +168,7 @@ Polymer({
         'neon-animation-finish': '_hideIntro'
     },
     _unPulish: function() {
-        this.toggleAttribute('mode-publish', false, this.$.header);
+        this.toggleAttribute('mode-publish', false, this);
         this.playAnimation('entry');
     },
     _onPulish: function(event) {
@@ -176,18 +176,20 @@ Polymer({
         this._publishArticle();
     },
     _publishArticle: function() {
-        this.toggleAttribute('mode-publish', true, this.$.header);
+        this.toggleAttribute('mode-publish', true, this);
         this.playAnimation('exit');
         // this._hideIntro();
     },
     _hideIntro: function() {
-        this.$.introduction.style.display = this.$.header.hasAttribute('mode-publish') ? 'none' : 'block';
-    },
-    // 依照介面大小調整 #header 的 Attributes (default: none; mobile-portait, mobile-landscape)
+        this.$.introduction.style.display = this.hasAttribute('mode-publish') ? 'none' : 'block';
+    },    
+    // 依照介面大小調整 :host 的 Attributes (default: none; mobile-portait, mobile-landscape)
+    // 這部分應該可以獨立出來做一個 moe-media-query
+    // 依據介面大小調整 :host 的 class 類別
     queryMatchesChanged: function(e) {
         switch (e.srcElement.id + e.detail.value) {
             case 'mediaDesktop' + true:
-                Polymer.Base.toggleAttribute('mobile', false, this.$.header);
+                Polymer.Base.toggleAttribute('mobile', false, this);
                 console.log('desktop ' + e.detail.value);
                 break;
             case 'mediaLandscape' + true:
@@ -195,7 +197,7 @@ Polymer({
                 console.log('landscape ' + e.detail.value);
                 break;
             case 'mediaPortrait' + true:
-                Polymer.Base.toggleAttribute('mobile', true, this.$.header);
+                Polymer.Base.toggleAttribute('mobile', true, this);
                 console.log('Portrait ' + e.detail.value);
                 break;
         }
