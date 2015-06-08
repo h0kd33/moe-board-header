@@ -1,8 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -11,12 +11,9 @@
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../moe-style/moe-style.html">
 <dom-module id="moe-board-header">
-    <link rel="stylesheet" type="text/css" href="moe-board-header.css">
     <style>
-    iron-media-query:;
     :host {
         display: block;
         box-sizing: border-box;
@@ -33,14 +30,13 @@
     :host([mobile]) #titleItem {
         @apply(--layout-vertical);
     }
+    
     :host([mobile]) #form {
         max-width: 100%;
     }
     /* 發文模式 */
     
-    :host([mode-publish]) {
-
-    }
+    :host([mode-publish]) {}
     
     :host([mode-publish]) #introduction,
     :host([mode-publish]) #introductionItem {
@@ -53,6 +49,7 @@
     :host([mode-publish]) #textarea {
         background-color: #fff;
     }
+    
     :host([mode-publish]) #form #textareaControl {
         display: block;
         @apply(--layout-horizontal);
@@ -62,6 +59,7 @@
     #introduction {
         transition: all 1s;
         max-height: 5.4em;
+        line-height: 1.8;
         overflow: hidden;
     }
     
@@ -75,11 +73,13 @@
         background-color: #eee;
         width: 100%;
     }
+    
     #form {
         padding: 0 16px;
         max-width: 450px;
     }
-    #form #textareaControl{
+    
+    #form #textareaControl {
         display: none;
     }
     
@@ -102,7 +102,7 @@
                     </div>
                     <div class="layout horizontal">
                         <paper-fab icon="favorite" mini title="heart"></paper-fab>
-                        <paper-button mini raised>機能</paper-button>
+                        <paper-button class="primary" mini raised >機能</paper-button>
                     </div>
                 </paper-item>
             </div>
@@ -180,7 +180,7 @@ Polymer({
     },
     _hideIntro: function() {
         this.$.introduction.style.display = this.hasAttribute('mode-publish') ? 'none' : 'block';
-    },    
+    },
     // 依照介面大小調整 :host 的 Attributes (default: none; mobile-portait, mobile-landscape)
     // 這部分應該可以獨立出來做一個 moe-media-query
     // 依據介面大小調整 :host 的 class 類別
