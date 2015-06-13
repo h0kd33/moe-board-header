@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -12,6 +11,7 @@
 <link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation.html">
 <link rel="import" href="../moe-style/moe-style.html">
+<link rel="import" href="../moe-media-query/moe-media-query.html">
 <dom-module id="moe-board-header">
     <style>
     :host {
@@ -89,9 +89,7 @@
     </style>
     <template>
         <!-- Media Query -->
-        <iron-media-query id="mediaLandscape" query="(max-width:768px) and (orientation:landscape)"></iron-media-query>
-        <iron-media-query id="mediaPortrait" query="(max-width:768px) and (orientation:portrait)"></iron-media-query>
-        <iron-media-query id="mediaDesktop" query="(min-width:769px)"></iron-media-query>
+        <moe-media-query on-querystate-changed="_onQuerystateChanged"></moe-media-query>
         <!-- Main -->
         <iron-image id="boardLogo" src="../img/logo.png" width="300" height="300" sizing="contain"></iron-image>
         <div id="headerContent" class="flex">
@@ -102,7 +100,7 @@
                     </div>
                     <div class="layout horizontal">
                         <paper-fab icon="favorite" mini title="heart"></paper-fab>
-                        <paper-button class="primary" mini raised >機能</paper-button>
+                        <paper-button class="classical" mini raised>機能</paper-button>
                     </div>
                 </paper-item>
             </div>
@@ -160,9 +158,6 @@ Polymer({
     },
 
     listeners: {
-        'mediaDesktop.query-matches-changed': 'queryMatchesChanged',
-        'mediaLandscape.query-matches-changed': 'queryMatchesChanged',
-        'mediaPortrait.query-matches-changed': 'queryMatchesChanged',
         'neon-animation-finish': '_hideIntro'
     },
     _unPulish: function() {
@@ -181,21 +176,18 @@ Polymer({
     _hideIntro: function() {
         this.$.introduction.style.display = this.hasAttribute('mode-publish') ? 'none' : 'block';
     },
-    // 依照介面大小調整 :host 的 Attributes (default: none; mobile-portait, mobile-landscape)
-    // 這部分應該可以獨立出來做一個 moe-media-query
-    // 依據介面大小調整 :host 的 class 類別
-    queryMatchesChanged: function(e) {
-        switch (e.srcElement.id + e.detail.value) {
-            case 'mediaDesktop' + true:
-                Polymer.Base.toggleAttribute('mobile', false, this);
+    _onQuerystateChanged: function(e) {
+        switch (e.detail.value) {
+            case 'desktop':
+                this.toggleAttribute('mobile', false, this);
                 console.log('desktop ' + e.detail.value);
                 break;
-            case 'mediaLandscape' + true:
-
+            case 'mobile-landscape':
+                this.toggleAttribute('mobile', true, this);                
                 console.log('landscape ' + e.detail.value);
                 break;
-            case 'mediaPortrait' + true:
-                Polymer.Base.toggleAttribute('mobile', true, this);
+            case 'mobile-portrait':
+                this.toggleAttribute('mobile', true, this);                
                 console.log('Portrait ' + e.detail.value);
                 break;
         }
