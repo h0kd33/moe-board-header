@@ -17,6 +17,7 @@
     :host {
         display: block;
         box-sizing: border-box;
+        color: var(--font-color);
     }
     
     :host,
@@ -82,7 +83,6 @@
     #form #textareaControl {
         display: none;
     }
-    
     .container {
         padding: 8px 0;
     }
@@ -100,9 +100,17 @@
                     </div>
                     <div class="layout horizontal">
                         <paper-fab icon="favorite" mini title="heart"></paper-fab>
-                        <paper-button class="classical" mini raised>機能</paper-button>
                     </div>
                 </paper-item>
+            </div>
+            <div id="centerLink">
+                <ul>
+                    <li><a href="#">anchor</a></li>
+                    <li><a href="#">background</a></li>
+                    <li><a href="#">dialog</a></li>
+                    <li><a href="#">element</a></li>
+                    <li><a href="#">frame</a></li>
+                </ul>
             </div>
             <paper-item id="introductionItem" class="flex">
                 <p id="introduction"></p>
@@ -183,11 +191,11 @@ Polymer({
                 console.log('desktop ' + e.detail.value);
                 break;
             case 'mobile-landscape':
-                this.toggleAttribute('mobile', true, this);                
+                this.toggleAttribute('mobile', true, this);
                 console.log('landscape ' + e.detail.value);
                 break;
             case 'mobile-portrait':
-                this.toggleAttribute('mobile', true, this);                
+                this.toggleAttribute('mobile', true, this);
                 console.log('Portrait ' + e.detail.value);
                 break;
         }
