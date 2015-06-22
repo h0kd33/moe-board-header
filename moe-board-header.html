@@ -8,12 +8,15 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animation.html">
 <link rel="import" href="../moe-style/moe-style.html">
 <link rel="import" href="../moe-media-query/moe-media-query.html">
+<link rel="import" href="../moe-form/moe-form.html">
 <dom-module id="moe-board-header">
     <style>
     :host {
         display: block;
+        position: relative;
         box-sizing: border-box;
         color: var(--font-color);
+        min-height: 325px;
     }
     
     :host,
@@ -23,31 +26,31 @@
     }
     /* 手機介面 : <768px */
     
-    :host([mobile]),
-    :host([mobile]) #titleItem {
+    :host([querystate^=mobile]),
+    :host([querystate^=mobile]) #titleItem {
         @apply(--layout-vertical);
     }
     
-    :host([mobile]) #form {
+    :host([querystate^=mobile]) #form {
         max-width: 100%;
     }
     /* 發文模式 */
     
-    :host([mode-publish]) {}
+    :host([publishing]) {}
     
-    :host([mode-publish]) #introduction,
-    :host([mode-publish]) #introductionItem {
+    :host([publishing]) #introduction,
+    :host([publishing]) #introductionItem {
         transition: all 0.5s ease-out;
         margin: 0;
         min-height: 0;
         height: 0px;
     }
     
-    :host([mode-publish]) #textarea {
+    :host([publishing]) #textarea {
         background-color: #fff;
     }
     
-    :host([mode-publish]) #form #textareaControl {
+    :host([publishing]) #form #textareaControl {
         display: block;
         @apply(--layout-horizontal);
         @apply(--layout-horizontal-reverse);
@@ -58,6 +61,7 @@
         max-height: 5.4em;
         line-height: 1.8;
         overflow: hidden;
+        margin-bottom: 0;
     }
     
     #boardLogo {
@@ -65,27 +69,37 @@
     }
     
     #textarea {
-        display: block;
+        display: border-left-color: #000;
+        k;
         transition: all 1s;
         background-color: #eee;
         width: 100%;
     }
     
     #form {
-        padding: 0 16px;
+        margin: 0 0;
+        padding: 0 16px 10px 16px;
+        transition: all 0.5s ease-in-out;
         max-width: 450px;
+    }
+    
+    #form[editting] {
+        margin: 0 auto;
+        max-width: 630px;
+        background-color: #fff;
+        box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+        transition: all 0.5s ease-in-out;
+        @apply(--layout-fit);
+        bottom: auto !important;
     }
     
     #form #textareaControl {
         display: none;
     }
-    .container {
-        padding: 8px 0;
-    }
     </style>
     <template>
         <!-- Media Query -->
-        <moe-media-query on-querystate-changed="_onQuerystateChanged"></moe-media-query>
+        <moe-media-query querystate="{{querystate}}"></moe-media-query>
         <!-- Main -->
         <!-- <iron-image id="boardLogo" src="../img/logo.png" width="300" height="300" sizing="contain"></iron-image> -->
         <img src="../img/logo.png" height="300" width="300" alt="">
@@ -112,14 +126,9 @@
             <paper-item id="introductionItem" class="flex">
                 <p id="introduction"></p>
             </paper-item>
-            <div id="form" class="container">
-                <!-- moe-form -->
-                <iron-autogrow-textarea id="textarea" on-click="_onPulish" rows="3"></iron-autogrow-textarea>
-                <div id="textareaControl" class="container">
-                    <paper-button mini raised>Submit</paper-button>
-                    <paper-button mini on-click="_unPulish">Cancel</paper-button>
-                </div>
-            </div>
+            <!-- moe-form -->
+            <moe-form opened id="form">
+            </moe-form>
         </div>
     </template>
 </dom-module>
@@ -133,9 +142,17 @@ Polymer({
     ],
 
     properties: {
+        querystate: {
+            type: String,
+            reflectToAttribute: true
+        },
         boardName: {
             type: String,
             value: '艦隊これくしょん'
+        },
+        publishing: {
+            type: Boolean,
+            value: false
         },
         introduction: {
             type: Object,
@@ -165,38 +182,6 @@ Polymer({
     listeners: {
         'neon-animation-finish': '_hideIntro'
     },
-    _unPulish: function() {
-        this.toggleAttribute('mode-publish', false, this);
-        this.playAnimation('entry');
-    },
-    _onPulish: function(event) {
-        this.fire('textarea-click');
-        this._publishArticle();
-    },
-    _publishArticle: function() {
-        this.toggleAttribute('mode-publish', true, this);
-        this.playAnimation('exit');
-        // this._hideIntro();
-    },
-    _hideIntro: function() {
-        this.$.introduction.style.display = this.hasAttribute('mode-publish') ? 'none' : 'block';
-    },
-    _onQuerystateChanged: function(e) {
-        switch (e.detail.value) {
-            case 'desktop':
-                this.toggleAttribute('mobile', false, this);
-                console.log('desktop ' + e.detail.value);
-                break;
-            case 'mobile-landscape':
-                this.toggleAttribute('mobile', true, this);
-                console.log('landscape ' + e.detail.value);
-                break;
-            case 'mobile-portrait':
-                this.toggleAttribute('mobile', true, this);
-                console.log('Portrait ' + e.detail.value);
-                break;
-        }
-    },
 
     // Element Lifecycle
 
@@ -209,7 +194,7 @@ Polymer({
         // necessary), or kick off any processes the element wants to perform.
 
         this.$.introduction.innerHTML = this.introduction;
-        this.$.textarea.set('textarea.placeholder', '點擊這裡開始發文..');
+        // this.$.textarea.set('textarea.placeholder', '點擊這裡開始發文..');
     },
 
     attached: function() {
@@ -219,13 +204,6 @@ Polymer({
         // This is a good place to perform any work related to your element's
         // visual state or active behavior (measuring sizes, beginning animations,
         // loading resources, etc).
-    },
-
-    detached: function() {
-        // The analog to `attached`, `detached` fires when the element has been
-        // removed from a document.
-        //
-        // Use this to clean up anything you did in `attached`.
     }
 });
 </script>
